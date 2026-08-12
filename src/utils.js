@@ -1,3 +1,9 @@
+export const mockTasks = [
+  { id: 1, title: "Set up Express server", dueDate: "2026-08-01", completed: false },
+  { id: 2, title: "Write GT5 routes", dueDate: "2026-08-02", completed: false },
+  { id: 3, title: "Test API endpoints in Postman", dueDate: "2026-08-03", completed: true },
+];
+
 export const formatDate = (date) => `Due: ${date.toLocaleDateString()}`;
 
 export const validateTask = ({ title, dueDate } = {}) => Boolean(title && dueDate);
