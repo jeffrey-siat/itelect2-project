@@ -2,8 +2,9 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
-import router from "./routes/index.js";
 import authRouter from "./routes/auth.js";
+import taskRouter from "./routes/tasks.js";
+import errorHandler from "./middleware/errorHandler.js";
 
 // Boot-time guard: refuse to start without a JWT secret
 if (!process.env.JWT_SECRET) {
@@ -16,22 +17,9 @@ app.use(cors());
 app.use(morgan("dev"));
 app.use(express.json());
 app.use("/api/auth", authRouter);
-app.use("/api", router);
+app.use("/api", taskRouter);
 
-app.use((err, req, res, next) => {
-  console.error(err.message);
-
-  if (err.name === "SequelizeValidationError") {
-    return res.status(400).json({ error: err.errors.map((e) => e.message) });
-  }
-
-  if (err.name === "SequelizeUniqueConstraintError") {
-    return res.status(409).json({ error: "Email is already registered." });
-  }
-
-  const status = err.status || 500;
-  res.status(status).json({ error: err.message });
-});
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
 
