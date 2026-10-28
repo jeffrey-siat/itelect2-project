@@ -13,7 +13,14 @@ if (!process.env.JWT_SECRET) {
 }
 
 const app = express();
-app.use(cors());
+
+// Session 14: only web pages served from these addresses may read
+// the API's answers in a browser. A comma-separated list.
+const allowedOrigins = (process.env.CORS_ORIGIN || "")
+  .split(",")
+  .filter(Boolean);
+
+app.use(cors({ origin: allowedOrigins }));
 app.use(morgan("dev"));
 app.use(express.json());
 app.use("/api/auth", authRouter);
