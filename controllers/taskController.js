@@ -2,13 +2,16 @@ import db from "../models/index.cjs";
 
 const { Task, User } = db;
 
+// Never send the password hash, even when a User is nested inside a Task.
+const safeUser = { model: User, attributes: { exclude: ["password"] } };
+
 export async function listTasks(req, res) {
-  const tasks = await Task.findAll({ include: User, order: [["id", "ASC"]] });
+  const tasks = await Task.findAll({ include: safeUser, order: [["id", "ASC"]] });
   res.json(tasks);
 }
 
 export async function getTask(req, res) {
-  const task = await Task.findByPk(req.params.id, { include: User });
+  const task = await Task.findByPk(req.params.id, { include: safeUser });
   if (!task) {
     return res.status(404).json({ error: `No task found with id ${req.params.id}` });
   }
